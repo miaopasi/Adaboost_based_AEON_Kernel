@@ -2,6 +2,7 @@
 __author__ = 'Xiaolong Shen @ NEXD'
 
 import sys
+import os
 from numpy import *
 from sklearn.externals import joblib
 # import imp
@@ -37,19 +38,15 @@ class AeonUtility(SDKUtility):
 			wifi = self.loader.extract(wp_path, wifi_path)
 		return wifi
 
-	def load_aeon_wifi(self, wifi_dir):
-		pass
-
-	def extract_aeon(self, wifi_path):
-		pass
-
-	def _extract_aeon(self, wifi_path):
-		"""
-
-		用户 ID#采集 ID#SSID#BSSID#Capability#Level#Frequency#扫描时间#强度（以100为准）#写入时间（毫秒
-		"""
-
-		pass
+	def extract_aeon(self, wifi_path, ref_list):
+		file_list = os.listdir(wifi_path)
+		route = []
+		for fn in file_list:
+			if 'journal' in fn:
+				continue
+			data = self.extract_wifi(os.path.join(wifi_path,fn), ref_list)
+			route.append(data)
+		return route
 
 	def accuracy(self, res, test_pos, train_pos):
 		RMSE = []
@@ -61,6 +58,30 @@ class AeonUtility(SDKUtility):
 			RMSE.append(se)
 		return RMSE
 
+	def pos_weighted(self, w_arr, cls_pos):
+		t_pos = zeros(array(cls_pos[0]).shape)
+		for i, w in enumerate(w_arr):
+			t_pos += array(cls_pos[i]) * w
+		t_pos = t_pos / w_arr.sum()
+		return t_pos
+
+	def accuracy_proba(self, res, test_pos, train_pos):
+		RMSE = []
+		for n in range(res.shape[0]):
+			w_arr = res[n,:]
+			pos_res = self.pos_weighted(w_arr, train_pos)
+			pos_tar = test_pos[n]
+			se = sqrt(((pos_tar - pos_res) ** 2).sum()) / self.map_ratio
+			RMSE.append(se)
+		return RMSE
+
+	def res_to_coord(self, res, train_pos, proba=False):
+		print res
+		if proba:
+			pos_res = self.pos_weighted(w_arr, train_pos)
+		else:
+			pos_res = array(train_pos[res])
+		return pos_res
 
 class AeonKernel(AdaboostClassification):
 	"""
@@ -83,8 +104,11 @@ class AeonKernel(AdaboostClassification):
 		ref = joblib.load(load_path)
 		self.clf = ref
 
-	def test(self, test_data):
-		res = self.clf.predict(test_data)
+	def test(self, test_data, proba=False):
+		if proba:
+			res = self.clf.predict_proba(test_data)
+		else:
+			res = self.clf.predict(test_data)
 		return res
 
 	def validate_test_accuracy(self, test_data, test_pos, train_pos):
@@ -93,3 +117,39 @@ class AeonKernel(AdaboostClassification):
 		print "RMSE:%s\n Average Mean Error: %s" %(RMSE, array(RMSE).mean())
 		return array(RMSE).mean()
 
+	def validate_test_accuracy_proba(self, test_data, test_pos, train_pos):
+		res_proba = self.test(test_data, True)
+		RMSE = self.util.accuracy_proba(res_proba, test_pos, train_pos);
+		print "RMSE:%s\n Average Mean Error: %s" %(RMSE, array(RMSE).mean())
+		return array(RMSE).mean()
+
+
+class Aeon(AeonKernel):
+	def __init__(self):
+		AeonKernel.__init__(self)
+		self.wifi_list = None
+		self.wp_pos = None
+		self.data = None
+
+	def load_data(self, data_path):
+		ref = load(data_path)
+		self.wifi_list = ref['wifi_list']
+		self.wp_pos = ref['wp_pos']
+		self.data = ref['all_data']
+
+	def load_config(self, clf_path, data_path):
+		self.load_clf(clf_path)
+		self.load_data(data_path)
+
+	def locator(self, data):
+		res = self.test(data)
+		return self.util.res_to_coord(res, self.wp_pos)
+
+	def process_route(self, route_path):
+		print self.wifi_list
+		route = self.util.extract_aeon(route_path, self.wifi_list)
+		res = []
+		for dp in route:
+			print "data property -- count: %s, miss_count: %s, wifi_vec: %s" %(dp.total_mac_count, dp.miss_mac_count, dp.wifi_matrix)
+			res.append(self.locator(dp.wifi_matrix))
+		return res
