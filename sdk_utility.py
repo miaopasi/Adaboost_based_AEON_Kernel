@@ -1,3 +1,4 @@
+# coding: UTF-8
 __author__ = 'Xiaolong Shen @ Nexd Tech'
 
 '''
@@ -21,7 +22,7 @@ class SDKUtility:
 	def __init__(self):
 		pass
 	"""
-	FUNCTION:
+	PUBLIC FUNCTION:
 		EXTRACT_WIFI    EXTRACTING WIFI FILE ONLY ACCORDING TO REFERENCE LIST FOR CLASSIFICATION USAGE
 	"""
 	def extract_wifi(self, wifi_path, ref_list=[]):
@@ -34,7 +35,23 @@ class SDKUtility:
 			wifi_matrix
 		"""
 		if ref_list:
+			pass
 
 		else:
 			print "No Reference List Found"
 			return
+
+
+	"""
+	PRIVATE FUNCTION
+	"""
+	def _extract_wifi(self, wifi_path, ref_list):
+		"""
+		Data Format:
+			用户 ID#采集 ID#SSID#BSSID#Capability#Level#Frequency#扫描时间#强度（以100为准）#写入时间（毫秒
+
+		:param wifi_path: path of wifi file(filepath)
+		:param ref_list: reference wifi list
+		:return:
+
+		"""
