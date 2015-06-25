@@ -1,3 +1,4 @@
+# coding: UTF-8
 __author__ = 'Xiaolong Shen @ NEXD'
 
 import sys
@@ -28,8 +29,11 @@ class AeonUtility:
 		self.loader = LoadWifiData()
 		self.map_ratio = 10
 
-	def load_wifi(self, wp_path, wifi_path):
-		wifi = self.loader.extract(wp_path, wifi_path)
+	def load_wifi(self, wp_path, wifi_path, ref_list = []):
+		if ref_list:
+			wifi = self.loader.extract_with_ref(wp_path, wifi_path, ref_list)
+		else:
+			wifi = self.loader.extract(wp_path, wifi_path)
 		return wifi
 
 	def _extract(self,wifi_path):
@@ -63,11 +67,11 @@ class AeonKernel(AdaboostClassification):
 	def train(self, train_data, train_tar):
 		self.clf = self.learn_clf(train_data, train_tar)
 
-	def save(self, save_path = 'Aeon_Adaboost_Classifier.npz'):
+	def save(self, save_path = 'Aeon_Adaboost_Classifier.pkl'):
 		# savez(save_path, clf=self.clf)
 		joblib.dump(self.clf, save_path, compress=9)
 
-	def load_clf(self, load_path = 'Aeon_Adaboost_Classifier.npz'):
+	def load_clf(self, load_path = 'Aeon_Adaboost_Classifier.pkl'):
 		ref = joblib.load(load_path)
 		self.clf = ref
 
@@ -81,20 +85,3 @@ class AeonKernel(AdaboostClassification):
 		print "RMSE:%s\n Average Mean Error: %s" %(RMSE, array(RMSE).mean())
 		return array(RMSE).mean()
 
-au = AeonUtility();
-train = au.load_wifi('./Data/Training/data.wp', './Data/Training/data.wifi')
-test = au.load_wifi('./Data/Test/Good_Attempt/data.wp', './Data/Training/data.wifi')
-print "> Loading Finished"
-ak = AeonKernel();
-ak.train(train.wifi_matrix, arange(train.wifi_matrix.shape[0]))
-print "> Training Finished"
-ak.save()
-print "> Saved"
-ak.load_clf()
-print "> Load In"
-import time
-st = time.time()
-ak.validate_test_accuracy(test.wifi_matrix, test.wp_pos, train.wp_pos)
-ed = time.time()
-print "> Validation Done"
-print "> Time Comsumption for Test : %s, Average Time Comsumption : %s" %(ed-st, float(ed-st)/test.wifi_matrix.shape[0])
