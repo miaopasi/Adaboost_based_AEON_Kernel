@@ -10,9 +10,9 @@ sys.path.append('./RefCode/')
 
 from loadfile import LoadWifiData
 from Adaboost_Classification_Class import *
+from sdk_utility import SDKUtility
 
-
-class AeonUtility:
+class AeonUtility(SDKUtility):
 	"""
 	Including Utility Functions for Aeon Usage
 
@@ -26,17 +26,24 @@ class AeonUtility:
 
 	"""
 	def __init__(self):
+		SDKUtility.__init__(self)
 		self.loader = LoadWifiData()
 		self.map_ratio = 10
 
-	def load_wifi(self, wp_path, wifi_path, ref_list = []):
+	def load_wifi(self, wp_path, wifi_path, ref_list=[]):
 		if ref_list:
 			wifi = self.loader.extract_with_ref(wp_path, wifi_path, ref_list)
 		else:
 			wifi = self.loader.extract(wp_path, wifi_path)
 		return wifi
 
-	def _extract(self,wifi_path):
+	def load_aeon_wifi(self, wifi_dir):
+		pass
+
+	def extract_aeon(self, wifi_path):
+		pass
+
+	def _extract_aeon(self, wifi_path):
 		"""
 
 		用户 ID#采集 ID#SSID#BSSID#Capability#Level#Frequency#扫描时间#强度（以100为准）#写入时间（毫秒
@@ -53,6 +60,7 @@ class AeonUtility:
 			se = sqrt(((pos_tar - pos_diff) ** 2).sum()) / self.map_ratio
 			RMSE.append(se)
 		return RMSE
+
 
 class AeonKernel(AdaboostClassification):
 	"""

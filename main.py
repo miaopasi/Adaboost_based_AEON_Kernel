@@ -4,7 +4,11 @@ from kernel import *
 
 au = AeonUtility();
 train = au.load_wifi('./Data/Training/data.wp', './Data/Training/data.wifi')
-test = au.load_wifi('./Data/Test/Good_Attempt/data.wp', './Data/Test/Good_Attempt/data.wifi', train.wifi_list)
+test = au.load_wifi('./Data/Test/Bad_Attempt/data.wp', './Data/Test/Bad_Attempt/data.wifi', train.wifi_list)
+
+print test.wifi_matrix.shape
+print test.wp_pos.shape
+
 print "> Loading Finished"
 ak = AeonKernel();
 # ak.train(train.wifi_matrix, arange(train.wifi_matrix.shape[0]))

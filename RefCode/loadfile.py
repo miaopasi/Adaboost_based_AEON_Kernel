@@ -64,7 +64,7 @@ class LoadWifiData:
 		self.wifi_matrix = self._extract_wifi_with_wp(wifi_filepath)
 
 	def extract_with_ref(self, wp_filepath, wifi_filepath, ref_list):
-		self._extract_with_ref(wp_filepath, wifi_filepath, ref_list)
+		self.wifi_matrix = self._extract_with_ref(wp_filepath, wifi_filepath, ref_list)
 		data = DataStorage(wp_filepath, wifi_filepath, self.wifi_list, self.wp_pos, self.wp_ind, self.wifi_matrix)
 		return data
 
@@ -90,6 +90,7 @@ class LoadWifiData:
 						insertpos = self.wifi_list.index(mac)
 						wifimatrix[indpointer, insertpos] = ss
 					except Exception, e:
+						pass
 						print e
 				indpointer += 1
 		return wifimatrix
