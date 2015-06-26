@@ -95,7 +95,7 @@ class SDKUtility:
 		lines = f.readlines()
 		f.close()
 		tn, tl = self._get_task_number(wifi_path)
-		print "Task Count: %s, list: %s" % (tn, tl)
+		# print "Task Count: %s, list: %s" % (tn, tl)
 		wifimatrix = zeros((tn, len(ref_list)))
 		total_count = 0
 		miss_count = 0

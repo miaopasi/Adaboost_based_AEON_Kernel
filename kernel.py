@@ -45,7 +45,7 @@ class AeonUtility(SDKUtility):
 			if 'journal' in fn:
 				continue
 			data = self.extract_wifi(os.path.join(wifi_path,fn), ref_list)
-			route.append(data)
+			route += data
 		return route
 
 	def accuracy(self, res, test_pos, train_pos):
@@ -149,12 +149,14 @@ class Aeon(AeonKernel):
 		return self.util.res_to_coord(res, self.wp_pos)
 
 	def process_route(self, route_path):
-		print self.wifi_list
+		# print self.wifi_list
 		route = self.util.extract_aeon(route_path, self.wifi_list)
-		res = []
+		res = {}
+		res_cred = {}
 		for dp in route:
-			print "data property -- count: %s, miss_count: %s, wifi_vec: %s" %(dp.total_mac_count, dp.miss_mac_count, dp.wifi_matrix)
+			print "data property -- count: %s, miss_count: %s" %(dp.total_mac_count, dp.miss_mac_count)
 			for x in self.locator(dp.wifi_matrix):
-				print x
-				res.append(x)
-		return res
+				# print x
+				res[dp.timestamp] = x
+				res_cred[dp.timestamp] = [dp.total_mac_count, dp.miss_mac_count]
+		return res, res_cred
