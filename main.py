@@ -30,5 +30,5 @@ from kernel import *
 
 ae = Aeon()
 ae.load_config('Aeon_Adaboost_Classifier.pkl', 'Aeon_Base_Data.npz')
-res = ae.process_route('./Raw_Data/Collect_File_Type/test')
+res = ae.process_route('./Raw_Data/Collect_File_Type/test2')
 print res

@@ -77,11 +77,14 @@ class AeonUtility(SDKUtility):
 
 	def res_to_coord(self, res, train_pos, proba=False):
 		print res
-		if proba:
-			pos_res = self.pos_weighted(w_arr, train_pos)
-		else:
-			pos_res = array(train_pos[res])
-		return pos_res
+		pos = [];
+		for x_res in res:
+			if proba:
+				pos_res = self.pos_weighted(x_res, train_pos)
+			else:
+				pos_res = array(train_pos[x_res])
+			pos.append(pos_res)
+		return pos
 
 class AeonKernel(AdaboostClassification):
 	"""
@@ -151,5 +154,7 @@ class Aeon(AeonKernel):
 		res = []
 		for dp in route:
 			print "data property -- count: %s, miss_count: %s, wifi_vec: %s" %(dp.total_mac_count, dp.miss_mac_count, dp.wifi_matrix)
-			res.append(self.locator(dp.wifi_matrix))
+			for x in self.locator(dp.wifi_matrix):
+				print x
+				res.append(x)
 		return res
