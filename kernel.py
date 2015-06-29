@@ -6,6 +6,7 @@ import os
 from numpy import *
 from sklearn.externals import joblib
 # import imp
+import time
 
 sys.path.append('./RefCode/')
 
@@ -160,3 +161,31 @@ class Aeon(AeonKernel):
 				res[dp.timestamp] = x
 				res_cred[dp.timestamp] = [dp.total_mac_count, dp.miss_mac_count]
 		return res, res_cred
+
+	def output_format(self, res, res_cred):
+		f = open('res_record.xml','w')
+		bid = '10107993'
+		fid = '101079930001'
+		res_key = list(res.keys())
+		res_key.sort()
+		st = time.strftime("%Y%m%d%H%M%S",time.localtime(res_key[0]*1e-3))
+		ed = time.strftime("%Y%m%d%H%M%S",time.localtime(res_key[-1]*1e-3))
+		f.write('<?xml version="1.0" encoding="GB2312"?>\n')
+		f.write('<recode bid="%s" floorID="%s" startTime="%s" endTime="%s">\n' % (bid, fid, st, ed))
+		f.write('\t<LocationPoints>\n')
+		for x in res_key:
+			cred = res_cred[x]
+			t = time.localtime(x * 1e-3)
+			nt = time.strftime("%Y%m%d%H%M%S", t)
+			if cred[0]<5:
+				continue
+			if (cred[0]-cred[1]) / cred[0] < 0.7:
+				continue;
+			f.write('\t\t<LoctP timestamp="%s" posX="%s" posY="%s"/>\n' % (nt, res[x][0], res[x][1]))
+		f.write('\t</LocationPoints>\n')
+		f.write('\t<RealPoints id="1">\n')
+		f.write('\t\t<RealP timestamp="%s" posX="%s" posY="%s"/>\n' % (st, "0.0", "0.0"))
+		f.write('\t\t<RealP timestamp="%s" posX="%s" posY="%s"/>\n' % (ed, "0.0", "0.0"))
+		f.write('\t</RealPoints>\n')
+		f.write('</recode>\n')
+		f.close()
