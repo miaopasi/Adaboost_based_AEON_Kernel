@@ -21,15 +21,11 @@ def interface_server(file_path):
 	res, res_cred = ae.process_route(file_path)
 	res_key = list(res.keys())
 	for time_key in res_key:
-		temp_result = {'user_id': str(res[time_key]['user']),
-		               'post_x': float(res[time_key]['post'][0]),
-		               'post_y': float(res[time_key]['post'][1]),
-		               'time_stamp': long(time_key)}
 		if res_cred[time_key][0] < 5:
-			temp_result['post_cred'] = 0
-		else:
-			temp_result['post_cred'] = float((res_cred[time_key][0] - res_cred[time_key][1]) / res_cred[time_key][0])
+			continue
+		temp_result = {'user_id': str(res[time_key]['user']), 'post_x': float(res[time_key]['post'][0]),
+		               'post_y': float(res[time_key]['post'][1]), 'time_stamp': long(time_key),
+		               'post_cred': float((res_cred[time_key][0] - res_cred[time_key][1]) / res_cred[time_key][0])}
 		interface_res.append(temp_result)
 	return interface_res
-
 

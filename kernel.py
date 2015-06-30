@@ -77,8 +77,8 @@ class AeonUtility(SDKUtility):
 		return RMSE
 
 	def res_to_coord(self, res, train_pos, proba=False):
-		print res
-		pos = [];
+		# print res
+		pos = []
 		for x_res in res:
 			if proba:
 				pos_res = self.pos_weighted(x_res, train_pos)
@@ -155,7 +155,7 @@ class Aeon(AeonKernel):
 		res = {}
 		res_cred = {}
 		for dp in route:
-			print "data property -- count: %s, miss_count: %s" %(dp.total_mac_count, dp.miss_mac_count)
+			# print "data property -- count: %s, miss_count: %s" %(dp.total_mac_count, dp.miss_mac_count)
 			for x in self.locator(dp.wifi_matrix):
 				# print x
 				res[dp.timestamp] = {}
