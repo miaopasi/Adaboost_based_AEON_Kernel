@@ -3,7 +3,6 @@ __author__ = 'Xiaolong Shen @ NEXD'
 
 import sys
 import os
-import redis
 from numpy import *
 from sklearn.externals import joblib
 # import imp
@@ -135,8 +134,6 @@ class Aeon(AeonKernel):
 		self.wifi_list = None
 		self.wp_pos = None
 		self.data = None
-		self.PData = None
-		self.getParam()
 
 	def load_data(self, data_path):
 		ref = load(data_path)
@@ -167,7 +164,7 @@ class Aeon(AeonKernel):
 				res_cred[dp.timestamp] = [dp.total_mac_count, dp.miss_mac_count]
 		return res, res_cred
 
-	def output_format(self, res, res_cred, transform=False):
+	def output_format(self, res, res_cred):
 		f = open('res_record.xml','w')
 		bid = '10107993'
 		fid = '101079930001'
@@ -186,16 +183,7 @@ class Aeon(AeonKernel):
 				continue
 			if (cred[0]-cred[1]) / cred[0] < 0.7:
 				continue;
-			if transform:
-				'''
-				x=(int(x)-PData[2])/PData[4];
-				y=(PData[1]-int(y)-PData[3])/PData[4];
-				'''
-				pos_x = (int(res[x][0]) - self.PData[2]) / self.PData[4]
-				pos_y = (self.PData[1] - int(res[x][1]) - self.PData[3]) / self.PData[4]
-				f.write('\t\t<LoctP timestamp="%s" posX="%s" posY="%s"/>\n' % (nt, pos_x, pos_y))
-			else:
-				f.write('\t\t<LoctP timestamp="%s" posX="%s" posY="%s"/>\n' % (nt, res[x][0], res[x][1]))
+			f.write('\t\t<LoctP timestamp="%s" posX="%s" posY="%s"/>\n' % (nt, res[x][0], res[x][1]))
 		f.write('\t</LocationPoints>\n')
 		f.write('\t<RealPoints id="1">\n')
 		f.write('\t\t<RealP timestamp="%s" posX="%s" posY="%s"/>\n' % (st, "0.0", "0.0"))
@@ -203,16 +191,3 @@ class Aeon(AeonKernel):
 		f.write('\t</RealPoints>\n')
 		f.write('</recode>\n')
 		f.close()
-
-	def getParam(self):
-		fid = 101001390013
-		db_key = ':'.join(['cont', str(fid)])
-		host = '182.92.97.182'
-		port = 6379
-		pdb = redis.Redis(host=host, port=port, db=0x8)
-		pack = pdb.hgetall(db_key)
-
-		if pack.has_key('mpm'):
-			self.PData = map(float,pack['mpm'].split('\t'))
-		print self.PData
-		return self.PData

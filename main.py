@@ -51,7 +51,7 @@ f.close()
 # res_key.sort()
 
 ae = Aeon()
-ae.output_format(res, res_cred);
+ae.output_format(res, res_cred, True);
 
 
 # count = 0
