@@ -9,6 +9,8 @@ TEMPORARILY DEVELOPED FOR AEON USAGE.
 ADD-ON FUNCTION NEED TO BE FILLED.
 '''
 from numpy import *
+import logging
+import os
 
 
 class ClfDataStorage:
@@ -30,6 +32,9 @@ class ClfDataStorage:
 
 class SDKUtility:
 	def __init__(self):
+		logging.basicConfig(filename=os.path.join(os.getcwd(), 'log.txt'), level=logging.DEBUG)
+		self.logger = logging.getLogger("Test_Vs0.1.0")
+		self.logger.info("=======================\nStart Logging:\n")
 		pass
 	"""
 	PUBLIC FUNCTION:

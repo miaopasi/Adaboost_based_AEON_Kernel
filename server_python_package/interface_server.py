@@ -3,9 +3,7 @@ __author__ = 'Xiaolong Shen @ NexdTech'
 from kernel import *
 import time
 
-import logging
 
-logging.basicConfig(filename=os.path.join(os.getcwd(), 'log.txt'), level=logging.DEBUG)
 
 def interface_server(file_path):
 	"""
@@ -29,7 +27,7 @@ def interface_server(file_path):
 		temp_result = {'user_id': str(res[time_key]['user']), 'post_x': float(res[time_key]['post'][0]),
 		               'post_y': float(res[time_key]['post'][1]), 'time_stamp': long(time_key),
 		               'post_cred': float((res_cred[time_key][0] - res_cred[time_key][1]) / res_cred[time_key][0])}
-		logging.debug("This Is The Result at Time: %s, The Res is %s" % (time_key, temp_result))s
+		ae.util.logger.debug("This Is The Result at Time: %s, The Res is %s" % (time_key, temp_result))
 		interface_res.append(temp_result)
 	return interface_res
 

@@ -45,6 +45,7 @@ class AeonUtility(SDKUtility):
 		for fn in file_list:
 			if 'journal' in fn:
 				continue
+			self.logger.debug("File %s is processed" % fn)
 			data = self.extract_wifi(os.path.join(wifi_path,fn), ref_list)
 			route += data
 		return route
@@ -151,6 +152,7 @@ class Aeon(AeonKernel):
 
 	def process_route(self, route_path):
 		# print self.wifi_list
+		self.util.logger.debug("The Route Input is %s" % route_path)
 		route = self.util.extract_aeon(route_path, self.wifi_list)
 		res = {}
 		res_cred = {}
