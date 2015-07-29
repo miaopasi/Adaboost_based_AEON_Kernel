@@ -158,12 +158,13 @@ class Aeon(AeonKernel):
 		res = {}
 		res_cred = {}
 		for dp in route:
-			# print "data property -- count: %s, miss_count: %s" %(dp.total_mac_count, dp.miss_mac_count)
+			print "data property -- count: %s, miss_count: %s" %(dp.total_mac_count, dp.miss_mac_count)
 			for x in self.locator(dp.wifi_matrix):
 				# print x
 				res[dp.timestamp] = {}
 				res[dp.timestamp]['user'] = dp.user
 				res[dp.timestamp]['post'] = x
+				print "Class: %s" % x
 				res_cred[dp.timestamp] = [dp.total_mac_count, dp.miss_mac_count]
 		return res, res_cred
 
