@@ -85,7 +85,7 @@ def output_format(data):
 	f.write('<recode bid="%s" floorID="%s" startTime="%s" endTime="%s">\n' % (bid, fid, st, ed))
 	f.write('\t<LocationPoints>\n')
 	for i, x in enumerate(data.wp_threshold):
-		t = time.localtime((st_time + i) * 1e-3)
+		t = time.localtime((st_time) * 1e-3 + i)
 		nt = time.strftime("%Y%m%d%H%M%S", t)
 		f.write('\t\t<LoctP timestamp="%s" posX="%s" posY="%s"/>\n' % (nt, x[0], x[1]))
 	f.write('\t</LocationPoints>\n')
